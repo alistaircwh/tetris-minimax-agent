@@ -1,0 +1,4 @@
+# No third-party packages required — Python 3.11+ stdlib only.
+#
+# To run Part A:  cd part_a && python -m search < test-vis1.csv
+# To run Part B:  cd part_b && python -m referee agent agent_random
