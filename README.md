@@ -4,6 +4,24 @@ A* search, a minimax+alpha-beta agent, and a tuned heuristic agent for Tetress �
 
 Coursework project for COMP30024 Artificial Intelligence, University of Melbourne, Semester 1 2024.
 
+<p align="center">
+  <img src="assets/playthrough.gif" alt="Final agent (RED) vs random baseline (BLUE) playing out" width="520" />
+</p>
+
+<p align="center">
+  <em>Final agent (RED) vs. random baseline (BLUE). Recorded with <a href="viz/record_game.py"><code>viz/record_game.py</code></a>.</em>
+</p>
+
+<table align="center">
+  <tr>
+    <td align="center"><img src="assets/snapshot_opening.svg" alt="Opening position" width="280" /><br/><sub><b>Opening</b> · the 2×2 books on both sides</sub></td>
+    <td align="center"><img src="assets/snapshot_lineclear.svg" alt="Column 3 fills up — about to clear" width="280" /><br/><sub><b>Line clear</b> · column 3 fills up, about to wipe 11 cells</sub></td>
+    <td align="center"><img src="assets/snapshot_midgame.svg" alt="Packed late-game board" width="280" /><br/><sub><b>Late game</b> · 89 cells occupied</sub></td>
+  </tr>
+</table>
+
+> **Want to scrub through a game yourself?** Open [`viz/viewer.html`](viz/viewer.html) in a browser (served from the `viz/` directory — eg. `cd viz && python3 -m http.server`) to step through frame-by-frame with play / pause / arrow-key controls.
+
 ---
 
 ## The Problem
@@ -128,7 +146,16 @@ python -m referee agent agent_random -l game.log
 
 Verbosity: `-v 0` result only, `-v 1` commentary, `-v 2` (default) commentary + board render, `-v 3` debug.
 
-![Game board mid-match](assets/board.png)
+### Regenerating the visuals
+
+The README hero GIF and snapshots above are produced from a recorded game. To rebuild them:
+
+```bash
+pip install Pillow                # only needed for the GIF; SVGs are pure stdlib
+python3 viz/record_game.py        # writes assets/playthrough.gif + assets/snapshot_*.svg + viz/game.json
+```
+
+The recorder plays the final agent (RED) against `agent_random` (BLUE) with a fixed seed, captures every board state, then emits the GIF, three static SVG snapshots, and a JSON dump for the interactive viewer.
 
 ---
 
@@ -161,6 +188,16 @@ part_b/
 ├── test.sh              # Batch benchmark script (100 games each side)
 ├── testing/             # Benchmark results
 └── report.pdf           # Written analysis submitted with the project
+
+viz/
+├── render.py            # Board → SVG / Pillow Image renderer
+├── record_game.py       # Plays a game, records frames, writes GIF + SVGs + JSON
+├── viewer.html          # Interactive browser viewer (loads game.json)
+└── game.json            # Recorded game data for the viewer (regenerable)
+
+assets/
+├── playthrough.gif      # README hero — full game animation
+└── snapshot_*.svg       # README still frames at key moments
 ```
 
 ---
