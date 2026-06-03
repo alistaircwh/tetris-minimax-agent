@@ -109,18 +109,28 @@ Phase-dependent constants:
 
 ## How to Run
 
-Requires Python 3.11+. No third-party packages — stdlib only.
+Requires Python 3.11+. The agents and referee are **pure stdlib**. The visualizer in [`viz/`](viz/) optionally uses Pillow to produce the animated GIF — the SVG output and the interactive `viewer.html` need no extra packages.
 
-### Part A
+There are three ways to interact with the project:
+
+| | What you see | When to use it |
+|---|---|---|
+| **Browser viewer** | The dark-themed UI from the screenshots above, with play / pause / scrub / arrow-key controls | You just want to *watch* a game |
+| **Terminal referee** | Live ASCII board rendered to your terminal as two agents play | You want to run agents head-to-head, change parameters, time-limit them, log results |
+| **Part A solver** | Stdout sequence of placements solving an A* puzzle | You're exercising the Part A search |
+
+### Watch a recorded game in the browser
+
+A pre-recorded game (final agent vs random baseline) ships with the repo. Serve the `viz/` directory locally and open the viewer:
 
 ```bash
-cd part_a
-python -m search < test-vis1.csv
+cd viz
+python3 -m http.server          # then open http://localhost:8000/viewer.html
 ```
 
-Input is a CSV where `r`/`R` = red cells, `b`/`B` = blue cells, uppercase `B` marks the target coordinate. Three sample inputs are included (`test-vis1.csv`, `test-vis2.csv`, `test-vis3.csv`).
+(A local server is needed because `viewer.html` `fetch`es `game.json` — opening the file directly with `file://` will be blocked by the browser.)
 
-### Part B
+### Run a live game in the terminal (Part B)
 
 ```bash
 cd part_b
@@ -144,18 +154,27 @@ python -m referee agent agent_random -t 180
 python -m referee agent agent_random -l game.log
 ```
 
-Verbosity: `-v 0` result only, `-v 1` commentary, `-v 2` (default) commentary + board render, `-v 3` debug.
+Verbosity: `-v 0` result only, `-v 1` commentary, `-v 2` (default) commentary + ASCII board render, `-v 3` debug.
+
+### Part A — A* puzzle solver
+
+```bash
+cd part_a
+python -m search < test-vis1.csv
+```
+
+Input is a CSV where `r`/`R` = red cells, `b`/`B` = blue cells, uppercase `B` marks the target coordinate. Three sample inputs are included (`test-vis1.csv`, `test-vis2.csv`, `test-vis3.csv`).
 
 ### Regenerating the visuals
 
-The README hero GIF and snapshots above are produced from a recorded game. To rebuild them:
+The README hero GIF, the three snapshots, and the `game.json` consumed by the browser viewer are all produced by the same script. To rebuild them from a fresh playthrough:
 
 ```bash
-pip install Pillow                # only needed for the GIF; SVGs are pure stdlib
+pip install Pillow                # only needed for the GIF; SVGs and viewer are pure stdlib
 python3 viz/record_game.py        # writes assets/playthrough.gif + assets/snapshot_*.svg + viz/game.json
 ```
 
-The recorder plays the final agent (RED) against `agent_random` (BLUE) with a fixed seed, captures every board state, then emits the GIF, three static SVG snapshots, and a JSON dump for the interactive viewer.
+The recorder plays the final agent (RED) against `agent_random` (BLUE) with a fixed seed, captures every board state including a "pre-clear" frame whenever a row/column fills up, then emits the GIF, three static SVG snapshots, and the JSON dump.
 
 ---
 
